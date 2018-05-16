@@ -1,3 +1,4 @@
+import datetime
 import os
 import signal
 import subprocess
@@ -105,7 +106,7 @@ class Home(TemplateView):
 
         if "save" in data:
             if name == "scratchpad":
-                name = str(len(os.listdir(MODULES_PATH)) + 1)
+                name = datetime.datetime.now().strftime('%Y%m%d%H%M')
             fname = os.path.join(MODULES_PATH, name) + ".py"
             fp = open(fname, "w")
             try:
