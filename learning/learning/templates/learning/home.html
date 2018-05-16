@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% for name, content in modules.items %}
+    <a href="#">{{ name }}</a><br />
+    <form action="." method="POST">
+        {% csrf_token %}
+        <input name="name" type="hidden" value="{{ name }}" />
+        <textarea name="content">{{ content }}</textarea>
+        <input type="submit" name="save" value="Save" />
+        <input type="submit" name="run" value="Run" />
+    </form>
+{% endfor %}
+
+<div id="output">
+    {{ output|linebreaks }}
+</div>
+
+server == {{ server }}
+{% if server %}
+    <iframe src="{{ server }}" />
+{% endif %}
+
+{% endblock %}

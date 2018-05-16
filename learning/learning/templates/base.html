@@ -1,0 +1,18 @@
+<!doctype html>
+{% load bootstrap4 %}
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Learning</title>
+
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+</head>
+
+<body>
+    <div id="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>
