@@ -6,10 +6,10 @@ class RequestHandler(server.BaseHTTPRequestHandler):
     def do_GET(self):
       s = self
 
-      s.send_header("Content-type", "text/html")
-
       s.send_response(200)
+      s.send_header("Content-type", "text/html")
       s.end_headers()
+
       s.wfile.write(b"hello")
 
       # and then the index file

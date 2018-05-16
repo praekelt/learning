@@ -18,7 +18,16 @@
     .editorpanel form {
         height: 100%;
     }
-
+    #output {
+        height: 40vh;
+        padding: 12px;
+        font: 12px/normal 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+        background-color: #21252;
+    }
+    #output iframe {
+        height: 100%;
+        width: 100%;
+    }
 </style>
 {% endblock %}
 
@@ -59,12 +68,14 @@
 {% endfor %}
 
 <div id="output">
-    {{ output|linebreaks }}
+    {% if server %}
+    A <a href="{{ server }}" target="_blank">server</a> has been detected.
+    <hr />
+    {% endif %}
+    {% if output %}
+        {{ output|linebreaks }}
+    {% endif %}
 </div>
-
-{% if server %}
-    <iframe src="{{ server }}" />
-{% endif %}
 
 {% endblock %}
 

@@ -2,6 +2,7 @@ import os
 import signal
 import subprocess
 import sys
+import urllib.request
 from collections import OrderedDict
 from time import sleep
 
@@ -15,7 +16,6 @@ from django.views.generic import TemplateView
 
 
 MODULES_PATH = os.path.join(settings.BASE_DIR, "..", "modules")
-pid = None
 
 
 class Home(TemplateView):
@@ -35,23 +35,28 @@ class Home(TemplateView):
         return di
 
     def post(self, request, *args, **kwargs):
-        global pid
         data = request.POST
         name = data["name"]
 
         if "run" in data:
 
             # Kill possible old server
+            pidfile = os.path.join(MODULES_PATH, "pid")
+            try:
+                with open(pidfile, "r") as fp:
+                    pid = int(fp.read())
+            except (IOError, ValueError):
+                pid = None
             if pid is not None:
-                os.kill(pid, signal.SIGTERM)
+                try:
+                    os.kill(pid, signal.SIGTERM)
+                except ProcessLookupError:
+                    pass
 
             # Write a run file
             fname = os.path.join(MODULES_PATH, name) + ".py.run"
-            fp = open(fname, "w")
-            try:
+            with open(fname, "w") as fp:
                 fp.write(data["content"])
-            finally:
-                fp.close()
 
             context = self.get_context_data(**kwargs)
 
@@ -65,19 +70,24 @@ class Home(TemplateView):
                 )
             except subprocess.TimeoutExpired:
                 # This is probably a server
-                output = "Server detected"
+                output = ""
                 proc = subprocess.Popen(
                     [sys.executable, fname]
                 )
                 sleep(1)
                 pid = proc.pid
+                with open(pidfile, "w") as fp:
+                    fp.write(str(pid))
                 p = psutil.Process(pid)
                 connections = p.connections()
                 if connections:
-                    context["server"] = "http://%s:%s" % (
+                    server = "http://%s:%s" % (
                         request.get_host().split(":")[0],
                         connections[0].laddr.port
                     )
+                    with urllib.request.urlopen(server) as response:
+                        output = response.read().decode("utf-8")
+                    context["server"] = server
             else:
                 if proc.returncode == 0:
                     output = proc.stdout.decode("utf-8")
