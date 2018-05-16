@@ -1,25 +1,90 @@
 {% extends "base.html" %}
 
+{% block extrahead %}
+<script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+<style type="text/css" media="screen">
+    .editor {
+        width: 100%;
+        height: 80%;
+        margin-bottom: 12px;
+    }
+    .editorpanel {
+        height: 50vh;
+        padding: 12px;
+    }
+    .editorpanel form {
+        height: 100%;
+    }
+
+</style>
+{% endblock %}
+
 {% block content %}
 
+<ul class="nav nav-tabs">
+{% for name in modules.keys %}
+    <li class="nav-item">
+        <a class="nav-link
+            {% if not active_name %}
+                {% if forloop.first %}active{% endif %}
+            {% else %}
+                {% if active_name == name %}active{%endif %}
+            {% endif %}"
+            data-index="{{ forloop.counter0 }}"
+            href="#">{{ name }}</a>
+    </li>
+{% endfor %}
+</ul>
+
 {% for name, content in modules.items %}
-    <a href="#">{{ name }}</a><br />
+<div class="editorpanel" id="editorpanel{{ forloop.counter0 }}"
+    {% if not active_name %}
+        {% if not forloop.first %}style="display: none;"{% endif %}
+    {% else %}
+        {% if active_name != name %}style="display: none;"{%endif %}
+    {% endif %}
+    >
     <form action="." method="POST">
         {% csrf_token %}
         <input name="name" type="hidden" value="{{ name }}" />
-        <textarea name="content">{{ content }}</textarea>
-        <input type="submit" name="save" value="Save" />
-        <input type="submit" name="run" value="Run" />
+        <textarea name="content" id="editorhelper{{ forloop.counter0 }}" style="display: none;">{{ content }}</textarea>
+        <div id="editor{{ forloop.counter0 }}" class="editor">{{ content }}</div>
+        <input type="submit" name="save" value="Save" class="btn btn-primary" />
+        <input type="submit" name="run" value="Run" class="btn btn-success" />
     </form>
+</div>
 {% endfor %}
 
 <div id="output">
     {{ output|linebreaks }}
 </div>
 
-server == {{ server }}
 {% if server %}
     <iframe src="{{ server }}" />
 {% endif %}
 
+{% endblock %}
+
+{% block bottom %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.3/ace.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    {% for name in modules.keys %}
+        var editor{{ forloop.counter0 }} = ace.edit("editor{{ forloop.counter0 }}");
+        editor{{ forloop.counter0 }}.setTheme("ace/theme/monokai");
+        editor{{ forloop.counter0 }}.session.setMode("ace/mode/python");
+        editor{{ forloop.counter0 }}.getSession().on("change", function () {
+            document.getElementById('editorhelper{{ forloop.counter0 }}').value = editor{{ forloop.counter0 }}.getSession().getValue();
+        });
+    {% endfor %}
+
+    $('ul.nav a').click(function(){
+        $('.editorpanel').hide();
+        $('#editorpanel' + $(this).data('index')).show();
+        $('ul.nav a').removeClass('active');
+        $(this).addClass('active');
+    });
+</script>
 {% endblock %}

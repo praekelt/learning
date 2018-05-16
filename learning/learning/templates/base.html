@@ -4,9 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Learning</title>
-
     {% bootstrap_css %}
     {% bootstrap_javascript %}
+    {% block extrahead %}
+    {% endblock %}
 </head>
 
 <body>
@@ -14,5 +15,7 @@
         {% block content %}
         {% endblock %}
     </div>
+    {% block bottom %}
+    {% endblock %}
 </body>
 </html>

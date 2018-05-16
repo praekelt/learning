@@ -87,6 +87,7 @@ class Home(TemplateView):
             # Update context
             context["modules"][name] = data["content"]
             context["output"] = output
+            context["active_name"] = name
 
             return HttpResponse(
                 render_to_string(self.template_name, context=context, request=request)
