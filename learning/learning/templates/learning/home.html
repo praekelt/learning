@@ -69,10 +69,8 @@
 
 <div id="output">
     {% if server %}
-    A <a href="{{ server }}" target="_blank">server</a> has been detected.
-    <hr />
-    {% endif %}
-    {% if output %}
+        <iframe src="{{ server }}" class="rounder border"></iframe>
+    {% elif output %}
         {{ output|linebreaks }}
     {% endif %}
 </div>

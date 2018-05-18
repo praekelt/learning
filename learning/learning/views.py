@@ -3,7 +3,6 @@ import os
 import signal
 import subprocess
 import sys
-import urllib.request
 from collections import OrderedDict
 from time import sleep
 
@@ -67,7 +66,7 @@ class Home(TemplateView):
                     [sys.executable, fname],
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
-                    timeout=1
+                    timeout=3
                 )
             except subprocess.TimeoutExpired:
                 # This is probably a server
@@ -86,8 +85,6 @@ class Home(TemplateView):
                         request.get_host().split(":")[0],
                         connections[0].laddr.port
                     )
-                    with urllib.request.urlopen(server) as response:
-                        output = response.read().decode("utf-8")
                     context["server"] = server
             else:
                 if proc.returncode == 0:
