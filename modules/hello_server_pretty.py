@@ -1,11 +1,11 @@
 from http import server
 
 
-TEMPLATE = b"""<html>
+TEMPLATE = """<html>
 <head>
     <link rel="stylesheet" type="text/css"
           href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
-     </link>
+    </link>
 </head>
 
 <body>
@@ -27,7 +27,7 @@ class RequestHandler(server.BaseHTTPRequestHandler):
       self.send_response(200)
       self.send_header("Content-type", "text/html")
       self.end_headers()
-      self.wfile.write(TEMPLATE)
+      self.wfile.write(TEMPLATE.encode("utf-8"))
 
 
 server.test(RequestHandler, server.HTTPServer, port=8001, bind="0.0.0.0")

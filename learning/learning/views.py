@@ -26,7 +26,7 @@ class Home(TemplateView):
     def get_context_data(self, **kwargs):
         di = super().get_context_data(**kwargs)
         modules = OrderedDict()
-        for module in os.listdir(MODULES_PATH):
+        for module in sorted(os.listdir(MODULES_PATH)):
             if module.endswith(".py"):
                 buf = open(os.path.join(MODULES_PATH, module), "r").read()
                 modules[module[:-3]] = buf
