@@ -20,11 +20,15 @@
         margin: auto;
     }
     #output {
-        position: relative;
-        padding-top: 56.3%;
         font: 12px/normal 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
         background-color: #21252;
     }
+
+    #output .iframe-wrapper {
+        position: relative;
+        padding-top: 56.3%;
+    }
+
     #output iframe {
         position: absolute;
         top: 0;
@@ -77,7 +81,9 @@
 
 <div id="output">
     {% if server %}
-        <iframe src="{{ server }}" class="rounder border"></iframe>
+        <div class="iframe-wrapper">
+            <iframe src="{{ server }}" class="rounder border"></iframe>
+        </div>
     {% elif output %}
         {{ output|linebreaks }}
     {% endif %}
